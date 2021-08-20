@@ -20,10 +20,11 @@ class MainActivity : AppCompatActivity() {
         val wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
         val ipAddress: String = Formatter.formatIpAddress(wifiManager.connectionInfo.ipAddress)
         SERVER_IP = ipAddress
+        Log.e("test",SERVER_IP)
 
         GlobalScope.launch {
 
-            var server = java.net.ServerSocket(5050)
+            var server = java.net.ServerSocket(5060)
             val client = server.accept()
             ClientHandler(client).run()
         }

@@ -1,24 +1,38 @@
 package com.example.myapplication
 
 import android.util.Log
-import java.io.BufferedReader
-import java.io.InputStreamReader
 import java.io.OutputStream
 import java.net.Socket
 
+
 class ClientHandler (client: Socket) {
     private val client: Socket = client
-    val input = BufferedReader(InputStreamReader(client.inputStream))
     private val writer: OutputStream = client.getOutputStream()
     private var running = false
 
-
     fun run() {
-        Log.e("test","test")
-        Log.e("read","${input.readLine()} ")
-        write("hello from server")
+        var jsonRequest =readfromSocket()
+        Log.e("asd",jsonRequest)
+        val x=  HandleResponse.handleRequest(jsonRequest)
+        write(x)
+        }
+
+    fun readfromSocket():String {
+        val sb = StringBuilder()
+        var c: Int
+        while (client.getInputStream().read().also { c = it } >= 0 && c != 0x0a /* <LF> */) {
+            if (c != 0x0d /* <CR> */) {
+                sb.append(c.toChar())
+            }
+            if (client.getInputStream().available()==0)
+            {
+                return sb.toString()
+            }
 
         }
+
+        return sb.toString()
+    }
 
     private fun write(message: String) {
         writer.write((message + '\n').toByteArray())
